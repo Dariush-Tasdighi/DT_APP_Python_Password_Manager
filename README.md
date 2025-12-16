@@ -77,7 +77,11 @@ deactivate
 ## Run Program
 
 ```bash
-python .\generate_password
+python .\app.py
+```
+
+```bash
+python .\generate_password.py
 ```
 
 ---
