@@ -1,6 +1,6 @@
 # DT Password Manager
 
-## This program was developed by the following person
+## This program was developed by
 
 - **Dariush Tasdighi**
   - Cell Phone Number: 09121087461
@@ -14,20 +14,20 @@
 - 'rich' package:
   - <https://pypi.org/project/rich>
   - <https://github.com/Textualize/rich>
-  - Extra:
+  - **More:**
     - <https://rich.readthedocs.io/en/latest>
     - Colors: <https://rich.readthedocs.io/en/latest/appendix/colors.html>
 
 - 'pyperclip' package:
   - <https://pypi.org/project/pyperclip>
   - <https://github.com/asweigart/pyperclip>
-  - Notes:
+  - **More:**
     - A cross-platform clipboard module for Python. (Only handles plain text for now.)
 
 - 'cryptography' package:
   - <https://pypi.org/project/cryptography>
   - <https://github.com/pyca/cryptography>
-  - Notes:
+  - **More:**
     - Documents: <https://cryptography.io/en/latest>
 
 ## Setup Environment

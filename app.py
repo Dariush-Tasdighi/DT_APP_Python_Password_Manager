@@ -7,6 +7,8 @@ from rich import print
 from rich.style import Style
 from rich.console import Console
 
+VERSION: str = "0.5"
+
 # You can change these values
 DEFAULT_EMAIL: str = "dariusht@gmail.com"
 DEFAULT_MOBILE: str = "9121087461"
@@ -478,23 +480,23 @@ def display_main_menu() -> None:
     """Display main menu"""
 
     while True:
-        title: str = "Welcome to DT Password Manager - Version 0.4"
+        title: str = f"Welcome to DT Password Manager - Version: {VERSION}"
         clear_screen_and_display_title(title=title)
 
         menu_items: list[str] = [
-            "0. Exit",
             "1. Search",
             "2. Add New",
             "3. List with Password",
             "4. List without Password",
+            "",
+            "For Exit: bye / end / exit / quit",
+
         ]
         choice: str = display_menu_and_get_user_prompt(
             menu_items=menu_items,
         )
 
-        match choice:
-            case "0":
-                goodbye()
+        match choice.lower():
             case "1":
                 pass
             case "2":
@@ -503,9 +505,11 @@ def display_main_menu() -> None:
                 display_items(display_password=True)
             case "4":
                 display_items(display_password=False)
+            case "0" | "exit" | "bye" | "quit":
+                goodbye()
 
 
-# OK
+# OK - TODO
 def create_sample_items() -> None:
     """Create sample items"""
 
