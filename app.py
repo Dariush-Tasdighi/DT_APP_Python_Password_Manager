@@ -3,9 +3,12 @@ import time
 import random
 import pyperclip
 from rich import print
-from app_constants import *
 from rich.console import Console
 from dt_security import generate_password
+
+# import app_constants
+# import app_constants as constants
+from app_constants import *
 
 __version__ = "0.6"
 
@@ -20,9 +23,9 @@ def get_now() -> str:
 def sort_items_by_name_and_update_ids() -> None:
     """Sort items by name and update IDs"""
 
-    items.sort(key=lambda item: item["name"])
+    items.sort(key=lambda item: item[KEY_NAME_NAME])
     for index, item in enumerate(iterable=items, start=1):
-        item["id"] = index
+        item[KEY_NAME_ID] = index
 
 
 def clear_screen() -> None:
@@ -205,60 +208,77 @@ def edit_item(item: dict) -> None:
 
     print()
 
+    updated: bool = False
+
     display_label(label=LABEL_NAME, width=max_width)
     name: str = input().strip()
     if name == "":
         name = item[KEY_NAME_NAME]
+    else:
+        updated = True
 
     display_label(label=LABEL_EMAIL, width=max_width)
     email: str = fix_special_field_value(value=input().lower())
     if email == "":
         email = item[KEY_NAME_EMAIL]
+    else:
+        updated = True
 
     display_label(label=LABEL_MOBILE, width=max_width)
     mobile: str = fix_special_field_value(value=input().lower())
     if mobile == "":
         mobile = item[KEY_NAME_MOBILE]
+    else:
+        updated = True
 
     display_label(label=LABEL_USERNAME, width=max_width)
     username: str = fix_special_field_value(value=input().lower())
     if username == "":
         username = item[KEY_NAME_USERNAME]
+    else:
+        updated = True
 
     display_label(label=label_password, width=max_width)
     password: str = fix_special_field_value(value=input())
     if password == "":
         password = item[KEY_NAME_PASSWORD]
     elif password.upper() == "NEW":
+        updated = True
         password = generate_password(
             length=GENERATED_PASSWORD_LENGTH,
         )
+    else:
+        updated = True
 
     display_label(label=LABEL_DESCRIPTION, width=max_width)
     description: str = input().strip()
     if description == "":
         description = item[KEY_NAME_DESCRIPTION]
+    else:
+        updated = True
 
-    now: str = get_now()
+    if updated:
+        now: str = get_now()
 
-    item.update(
-        {
-            KEY_NAME_NAME: name,
-            KEY_NAME_EMAIL: email,
-            KEY_NAME_MOBILE: mobile,
-            KEY_NAME_PASSWORD: password,
-            KEY_NAME_USERNAME: username,
-            KEY_NAME_DESCRIPTION: description,
-            KEY_NAME_UPDATE_TIME: now,
-        }
-    )
+        item.update(
+            {
+                KEY_NAME_NAME: name,
+                KEY_NAME_EMAIL: email,
+                KEY_NAME_MOBILE: mobile,
+                KEY_NAME_PASSWORD: password,
+                KEY_NAME_USERNAME: username,
+                KEY_NAME_DESCRIPTION: description,
+                #
+                KEY_NAME_UPDATE_TIME: now,
+            }
+        )
 
-    sort_items_by_name_and_update_ids()
+        sort_items_by_name_and_update_ids()
 
-    success_message = "\n[+] Item updated successfully."
-    console.print(success_message, style=STYLE_MESSAGE_SUCCESS)
+        success_message = "\n[+] Item updated successfully."
+        console.print(success_message, style=STYLE_MESSAGE_SUCCESS)
 
-    press_enter_to_continue()
+        press_enter_to_continue()
 
 
 def display_error_message(message: str) -> None:
@@ -302,7 +322,7 @@ def display_items(display_password: bool = False) -> None:
             pass
 
 
-def duplicate_item(item: dict) -> dict:
+def get_duplicate_item(item: dict) -> dict:
     """Duplicate item"""
 
     now: str = get_now()
@@ -385,7 +405,7 @@ def display_item_details(item: dict) -> None:
             case "1":
                 edit_item(item=item)
             case "2":
-                new_item: dict = duplicate_item(item=item)
+                new_item: dict = get_duplicate_item(item=item)
                 items.append(new_item)
                 sort_items_by_name_and_update_ids()
                 break
@@ -484,6 +504,14 @@ def display_table_footer() -> None:
     console.print("-" * total_width, style=STYLE_LABEL)
 
 
+def change_master_password() -> None:
+    """Change master password"""
+
+
+def display_about() -> None:
+    """Display About"""
+
+
 def display_main_menu() -> None:
     """Display main menu"""
 
@@ -492,12 +520,14 @@ def display_main_menu() -> None:
         clear_screen_and_display(title=title)
 
         menu_items: list[str] = [
-            # "1. Search",
             "1. Add New",
             "2. List with Password",
             "3. List without Password",
+            "4. Change Master Password" "",
             "",
-            "For Exit: '0' | bye | end | exit | quit | 'q'",
+            "5. About",
+            "",
+            "Type '0' | bye | end | exit | quit | 'q' for exit...",
         ]
 
         choice: str = display_menu_and_get_user_prompt(
@@ -511,6 +541,10 @@ def display_main_menu() -> None:
                 display_items(display_password=True)
             case "3":
                 display_items(display_password=False)
+            case "4":
+                change_master_password()
+            case "5":
+                display_about()
             case "0" | "bye" | "end" | "exit" | "quit" | "q":
                 goodbye()
 
@@ -554,8 +588,8 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         console = Console()
-        items: list[dict] = []
 
+        items: list[dict] = []
         master_password: str = ""
 
         main()

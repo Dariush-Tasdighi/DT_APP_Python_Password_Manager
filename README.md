@@ -3,11 +3,22 @@
 ## This program was developed by
 
 - **Dariush Tasdighi**
-  - Cell Phone Number: 09121087461
+  - Cell Phone Number: (+98)-9121087461
   - Email Address: <DariushT@GMail.com>
   - LinkedIn: <https://www.linkedin.com/in/tasdighi>
+  - Telegram ID: <https://t.me/Dariush_Tasdighi>
   - Telegram Channel: <https://t.me/IranianExperts>
   - Telegram Channel: <https://t.me/DT_PYTHON_LEARNING>
+
+- **Nadia Davari**
+  - Cell Phone Number: (+98)-9127289805
+  - Email Address: <N.P.Davari@gmail.com>
+  - LinkedIn: <https://www.linkedin.com/in/npdavari>
+
+- **Hossein Rouzbahani**
+  - Cell Phone Number: (+98)-9383995083
+  - Email Address: <HR.Hossein.Rouzbahani@Gmail.com>
+  - LinkedIn: <https://www.linkedin.com/in/hossein-rouzbahani>
 
 ## Packages Used
 
