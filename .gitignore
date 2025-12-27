@@ -1,8 +1,10 @@
 .env
-data.bin
 
 data/
 
 .venv/
 .vscode/
 __pycache__/
+
+data.bin
+data_*.bin

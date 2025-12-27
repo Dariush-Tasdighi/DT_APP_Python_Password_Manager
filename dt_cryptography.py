@@ -3,9 +3,10 @@ DT Cryptography
 """
 
 import os
+import base64
 import random
 import string
-import base64
+import hashlib
 
 from typing import Tuple
 
@@ -64,6 +65,12 @@ def generate_password(length: int = 24) -> str:
     result: str = "".join(password)
 
     return result
+
+
+def hash_data(data: str) -> str:
+    """Hash data using SHA-256"""
+
+    return hashlib.sha256(data.encode()).hexdigest()
 
 
 def derive_key_from_password(password: str, salt: bytes) -> bytes:

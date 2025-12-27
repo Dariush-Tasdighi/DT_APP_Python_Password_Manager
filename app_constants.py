@@ -11,11 +11,9 @@ DEFAULT_MOBILE: str = "9121087461"
 DEFAULT_USERNAME: str = "dariusht"
 GENERATED_PASSWORD_LENGTH: int = 24
 
-# Nadia
 DATA_FILE_PATH: Path = Path("./data.bin")
 # End: You can change these values
 
-# Nadia
 DATE_TIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 BACKUP_FILE_FORMAT: str = "%Y_%m_%d_%H_%M_%S"
 

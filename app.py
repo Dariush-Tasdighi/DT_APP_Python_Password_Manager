@@ -2,11 +2,10 @@ import os
 import time
 import json
 import pickle
-import hashlib
-import getpass
 import pyperclip
 
 from pathlib import Path
+from getpass import getpass
 
 from rich import print
 from rich.console import Console
@@ -16,20 +15,34 @@ from rich.console import Console
 from app_constants import *
 from app_about import display_about
 
+from dt_cryptography import hash_data
 from dt_cryptography import generate_password
 from dt_cryptography import encrypt_plain_text
 from dt_cryptography import decrypt_encrypted_data
 from dt_cryptography import validate_password_strength
 
-__version__ = "0.7"
+
+__version__ = "1.0"
 
 
-# Nadia
 def get_now(format: str = DATE_TIME_FORMAT) -> str:
     """Get now"""
 
     now: str = time.strftime(format)
+
     return now
+
+
+def get_password() -> str:
+    """Get password"""
+
+    password: str = getpass(prompt="")
+    # print(f"Your 'Password' is |{password}|")  # Debug
+    password = password.replace(" ", "")
+    # print(f"Your 'Password' is |{password}|")  # Debug
+    # exit()  # Debug
+
+    return password
 
 
 def sort_items_by_name_and_update_ids() -> None:
@@ -74,12 +87,13 @@ def display_menu_and_get_user_prompt(menu_items: list[str]) -> str:
 
     console.print("\nEnter your choice:", end=" ", style=STYLE_MESSAGE_WAITING)
     choice: str = input().strip()
+
     return choice
 
 
-# Nadia
 def goodbye() -> None:
     """Encrypt and save data before exit."""
+
     encrypt_and_save_data(password=master_password)
 
     console.print("\nGoodbye!\n", style=STYLE_MESSAGE_SUCCESS)
@@ -101,6 +115,7 @@ def fix_special_field_value(value: str) -> str:
     """Fix special field value"""
 
     value = value.replace(" ", "")
+
     return value
 
 
@@ -184,8 +199,7 @@ def add_new_item() -> None:
 
     sort_items_by_name_and_update_ids()
 
-    # Nadia used display_success_message()
-    display_success_message(message="Item added successfully!")
+    display_success_message(message="Item added successfully.")
     press_enter_to_continue()
 
 
@@ -287,7 +301,6 @@ def edit_item(item: dict) -> None:
 
         sort_items_by_name_and_update_ids()
 
-        # Nadia used display_success_message()
         display_success_message(message="Item updated successfully.")
 
         press_enter_to_continue()
@@ -296,11 +309,9 @@ def edit_item(item: dict) -> None:
 def display_error_message(message: str) -> None:
     """Display error message"""
 
-    # Nadia added [-]
     console.print(f"[-] {message}", style=STYLE_MESSAGE_ERROR)
 
 
-# Nadia
 def display_success_message(message: str) -> None:
     """Display success message"""
 
@@ -314,8 +325,7 @@ def display_items(display_password: bool = False) -> None:
         clear_screen()
 
         if not items:
-            # Nadia removed [-], because added it in the display_error_message()
-            display_error_message(message="No data found!")
+            display_error_message(message="ّItems not found!")
             press_enter_to_continue()
             break
 
@@ -331,14 +341,15 @@ def display_items(display_password: bool = False) -> None:
             "Type 'ID' and then press [ENTER] to display item details or just press [ENTER] to go back:"
         )
         console.print(message, end=" ", style=STYLE_MESSAGE_WAITING)
-        choise: str = input().strip()
+        choice: str = input().strip()
 
-        if not choise:
+        if not choice:
             break
 
         try:
-            choise_int: int = int(choise)
-            display_item_details(item=items[choise_int - 1])
+            choice_int: int = int(choice)
+            display_item_details(item=items[choice_int - 1])
+
         except:
             pass
 
@@ -525,25 +536,28 @@ def display_table_footer() -> None:
     console.print("-" * total_width, style=STYLE_LABEL)
 
 
-# Nadia
 def change_master_password() -> None:
     """Change master password"""
 
-    global master_password
+    try:
+        clear_screen_and_display(title="Change Master Password")
 
-    clear_screen_and_display(title="Change Master Password")
-    console.print(
-        "\nEnter Previous Master Password:",
-        end=" ",
-        style=STYLE_MESSAGE_WAITING,
-    )
-    password: str = getpass.getpass(prompt="")
+        previous_master_password_label: str = "Previous Master Password"
+        display_label(
+            label=previous_master_password_label,
+            width=len(previous_master_password_label),
+        )
+        previous_master_password: str = get_password()
 
-    if password == master_password:
-        master_password = set_master_password(is_change_password=True)
-    else:
-        display_error_message(message="Previous Master Password is incorrect!")
-        press_enter_to_continue()
+        if master_password == previous_master_password:
+            set_master_password(first_time=False)
+        else:
+            display_error_message(message="Previous Master Password is not correct!")
+            press_enter_to_continue()
+
+    # NOTE: For cancelling with CTRL+'C'
+    except KeyboardInterrupt:
+        print()
 
 
 def display_main_menu() -> None:
@@ -561,7 +575,6 @@ def display_main_menu() -> None:
             "",
             "5. About",
             "",
-            # Nadia added save, because Ctrl+C not save changes
             "Type '0' | bye | end | exit | quit | 'q' for save and exit...",
         ]
 
@@ -586,68 +599,73 @@ def display_main_menu() -> None:
                 goodbye()
 
 
-# Nadia
 def is_master_password_set() -> bool:
     """Check if the master password file exists and is non-empty."""
 
-    # Check if file exists and is non-empty
-    return DATA_FILE_PATH.is_file() and DATA_FILE_PATH.stat().st_size > 0
+    # NOTE: Check if the file exists and is not empty
+    result = DATA_FILE_PATH.is_file() and DATA_FILE_PATH.stat().st_size > 0
+
+    return result
 
 
-# Nadia
-def set_master_password(is_change_password: bool = False) -> str:
-    """Get master password and save it globally."""
+def set_master_password(first_time: bool) -> None:
+    """Set master password"""
 
-    # Choose title and prompt based on is_change_password
-    if is_change_password:
-        title: str = "Change Master Password"
-        prompt_message = "\nEnter New Master Password:"
+    title: str
+    success_message: str
+    new_master_password_label: str = "        New Master Password"
+    confirm_new_master_password_label: str = "Confirm New Master Password"
+
+    max_width: int = len(confirm_new_master_password_label)
+
+    if first_time:
+        title = "Setup your 'Master Password' for the first time"
+        success_message = "Master Password set successfully."
     else:
-        title: str = "Set up your Master Password"
-        prompt_message = "\nEnter Master Password:"
+        title = "Change Master Password"
+        success_message = "Master Password updated successfully."
 
     while True:
         clear_screen_and_display(title=title)
 
-        console.print(prompt_message, end=" ", style=STYLE_MESSAGE_WAITING)
-        password: str = getpass.getpass(prompt="")
+        display_label(label=new_master_password_label, width=max_width)
+        new_master_password: str = get_password()
 
         message: str
         is_valid: bool
 
-        is_valid, message = validate_password_strength(password=password)
+        is_valid, message = validate_password_strength(
+            password=new_master_password,
+        )
 
         if not is_valid:
             display_error_message(message=message)
             press_enter_to_continue()
             continue
 
-        # Confirm password
-        console.print("Confirm Master Password:", end=" ", style=STYLE_MESSAGE_WAITING)
-        confirm_password: str = getpass.getpass(prompt="")
+        display_label(label=confirm_new_master_password_label, width=max_width)
+        confirm_new_master_password: str = get_password()
 
-        if password != confirm_password:
-            message: str = "Passwords does not match. Please try again!"
+        if new_master_password != confirm_new_master_password:
+            message = "Passwords are not the same! Please try again."
             display_error_message(message=message)
             press_enter_to_continue()
             continue
 
-        # Succuss
-        display_success_message(message=message)
+        global master_password
+        master_password = new_master_password
 
-        # NOTE: This line Ensures the password is preserved even if the user exits with Ctrl+C rather than 'bye' or 'end'.
-        encrypt_and_save_data(password=password)
+        # NOTE: This line Ensures the password is preserved,
+        # even if the user exits with Ctrl+C rather than 'bye' or 'end'.
+        encrypt_and_save_data(password=master_password)
 
-        return password
-
-
-# Nadia
-def hash_data(data: str) -> str:
-    return hashlib.sha256(data.encode()).hexdigest()
+        display_success_message(message=success_message)
+        press_enter_to_continue()
+        break
 
 
-# Nadia
 def handle_backup_if_changed(password: str, new_json_string: str) -> None:
+    """Check for data changes and create a backup."""
 
     new_data_hash: str = hash_data(data=new_json_string)
 
@@ -675,15 +693,13 @@ def handle_backup_if_changed(password: str, new_json_string: str) -> None:
         DATA_FILE_PATH.rename(target=backup_file_path)
 
 
-# Nadia
 def encrypt_and_save_data(password: str) -> None:
     """Encrypt items list using AES-256-GCM (Quantum-resistant symmetric encryption)"""
 
-    # 1. Serialize new data
+    # NOTE: Serialize items to JSON string
     new_json_string: str = json.dumps(obj=items)
 
-    # Backup last file if there is change in data
-
+    # NOTE: Backup last file if there is some changes in items
     if DATA_FILE_PATH.is_file():
         handle_backup_if_changed(
             password=password,
@@ -699,16 +715,16 @@ def encrypt_and_save_data(password: str) -> None:
         pickle.dump(obj=encrypted_data, file=file)
 
 
-# Nadia
-def load_and_decrypt_data() -> str:
-    """Decrypt items list using AES-256-GCM (Quantum-resistant symmetric encryption)"""
+def load_and_decrypt_data() -> None:
+    """Load data from file and decrypt it"""
 
     while True:
-        title: str = f"Master Password Authentication"
+        title: str = "Login"
         clear_screen_and_display(title=title)
 
-        console.print("\nEnter Master Password:", end=" ", style=STYLE_MESSAGE_WAITING)
-        password: str = getpass.getpass(prompt="")
+        master_password_label: str = "Master Password"
+        display_label(label=master_password_label, width=len(master_password_label))
+        password: str = get_password()
 
         with open(file=DATA_FILE_PATH, mode="rb") as file:
             encrypted_data: dict = pickle.load(file=file)
@@ -726,12 +742,13 @@ def load_and_decrypt_data() -> str:
             press_enter_to_continue()
             continue
 
-        if is_decrypted:
-            items.clear()
-            items.extend(json.loads(plain_text))
+        items.clear()
+        items.extend(json.loads(s=plain_text))
 
-            display_success_message(message=plain_text)
-            return password
+        global master_password
+        master_password = password
+
+        break
 
 
 def main() -> None:
@@ -747,11 +764,10 @@ if __name__ == "__main__":
         items: list[dict] = []
         master_password: str = ""
 
-        # Nadia
-        if not is_master_password_set():
-            master_password = set_master_password()
+        if is_master_password_set():
+            load_and_decrypt_data()
         else:
-            master_password = load_and_decrypt_data()
+            set_master_password(first_time=True)
 
         main()
 

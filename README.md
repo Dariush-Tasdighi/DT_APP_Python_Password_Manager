@@ -1,5 +1,7 @@
 # DT Password Manager
 
+![DT Password Manager](./images/logo.png "DT Password Manager")
+
 ## This program was developed by
 
 - **Dariush Tasdighi**
@@ -95,5 +97,29 @@ python .\app.py
 ```bash
 python .\generate_password.py
 ```
+
+- For Test:
+
+```bash
+python .\get_password.py
+```
+
+```bash
+python .\quantum_resistant_encryption.py
+```
+
+```bash
+python .\quantum_resistant_encryption_learn.py
+```
+
+## TODO
+
+- Update all docstrings in 'dt_cryptography'
+- Display error message, in red color, in Add New Item, if 'password' is weak!
+- Display warning message, in yellow color, in Add New Item, if 'password' is duplicated!
+- Display error message, in red color, in Update Item, if 'password' is weak!
+- Display warning message, in yellow color, in Update Item, if 'password' is duplicated!
+- Display warning message, in yellow color, in List, if 'password' is duplicated!
+  - Display error message, in red color, in List, if 'password' is weak!
 
 ---
