@@ -5,10 +5,11 @@
 - **Dariush Tasdighi**
   - Cell Phone Number: (+98)-9121087461
   - Email Address: <DariushT@GMail.com>
-  - LinkedIn: <https://www.linkedin.com/in/tasdighi>
   - Telegram ID: <https://t.me/Dariush_Tasdighi>
-  - Telegram Channel: <https://t.me/IranianExperts>
-  - Telegram Channel: <https://t.me/DT_PYTHON_LEARNING>
+  - LinkedIn: <https://www.linkedin.com/in/tasdighi>
+  - Telegram Channels
+    - <https://t.me/IranianExperts>
+    - <https://t.me/DT_PYTHON_LEARNING>
 
 - **Nadia Davari**
   - Cell Phone Number: (+98)-9127289805
